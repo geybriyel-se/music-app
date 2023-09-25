@@ -9,6 +9,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -71,6 +72,13 @@ public class LyricsController {
      */
     @GetMapping("/getLyrics/{id}")
     public ApiResponse getLyricsByID(@PathVariable String id) {
+        boolean isCached = redisService.keyExists("lyrics:" + id);
+        if (isCached) {
+            Object value = redisService.getValue("lyrics:" + id);
+            log.info("FROM CACHE - Lyrics of song with id {} retrieved: {}", id, value);
+            return new ApiResponse(HttpStatus.OK.value(), value);
+        }
+
         Unirest.setTimeouts(0, 0);
         try {
             HttpResponse<String> response = Unirest.get("https://genius-song-lyrics1.p.rapidapi.com/song/lyrics/?id=" + id)
