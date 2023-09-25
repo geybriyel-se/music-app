@@ -2,6 +2,7 @@ package com.geybriyel.music.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.geybriyel.music.response.ApiResponse;
 import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.service.RedisService;
 import com.mashape.unirest.http.HttpResponse;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,7 +38,7 @@ public class LyricsController {
      * @return
      */
     @GetMapping("/search/{keyword}")
-    public ResponseEntity<String> searchSongByKeyword(@PathVariable String keyword) {
+    public ApiResponse searchSongByKeyword(@PathVariable String keyword) {
         Unirest.setTimeouts(0, 0);
         try {
             HttpResponse<String> response = Unirest.get("https://genius-song-lyrics1.p.rapidapi.com/search/?q=%3C" + keyword + "%3E")
@@ -46,13 +46,20 @@ public class LyricsController {
                     .header("X-RapidAPI-Key", apiKey)
                     .asString();
             String body = response.getBody();
-            log.info("Songs with keyword '{}' retrieved: {}", keyword, body);
-            return ResponseEntity.ok(body);
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            try {
+                JsonNode jsonNode = objectMapper.readTree(body);
+                log.info("Songs with keyword '{}' retrieved: {}", keyword, jsonNode);
+                return new ApiResponse(HttpStatus.OK.value(), jsonNode);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new ApiResponse(ErrorCodes.JSON_PARSE_ERROR.getCode(), ErrorCodes.JSON_PARSE_ERROR);
+            }
         } catch (UnirestException e) {
             e.printStackTrace();
-            String errorMessage = "An error occurred while retrieving the data";
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            return new ApiResponse(ErrorCodes.INTERNAL_SERVER_ERROR.getCode(), ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -63,7 +70,7 @@ public class LyricsController {
      * @return
      */
     @GetMapping("/getLyrics/{id}")
-    public ResponseEntity getLyricsByID(@PathVariable String id) {
+    public ApiResponse getLyricsByID(@PathVariable String id) {
         Unirest.setTimeouts(0, 0);
         try {
             HttpResponse<String> response = Unirest.get("https://genius-song-lyrics1.p.rapidapi.com/song/lyrics/?id=" + id)
@@ -74,17 +81,22 @@ public class LyricsController {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 JsonNode jsonNode = objectMapper.readTree(body);
+                boolean hasError = jsonNode.has("error");
+                if (hasError) {
+                    log.info("Failed to retrieve lyrics. Invalid song ID: {}", jsonNode);
+                    return new ApiResponse(ErrorCodes.INVALID_SONG_ID.getCode(), ErrorCodes.INVALID_SONG_ID.getMessage());
+                }
                 redisService.setValue("lyrics:" + id, jsonNode);
                 log.info("Lyrics of song with id {} retrieved: {}", id, body);
-                return ResponseEntity.ok(body);
+                return new ApiResponse(HttpStatus.OK.value(), jsonNode);
             } catch (IOException e) {
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCodes.JSON_PARSE_ERROR);
+                return new ApiResponse(ErrorCodes.JSON_PARSE_ERROR.getCode(), ErrorCodes.JSON_PARSE_ERROR);
             }
         } catch (UnirestException e) {
             e.printStackTrace();
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCodes.INTERNAL_SERVER_ERROR);
+            return new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
