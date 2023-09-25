@@ -1,7 +1,6 @@
 package com.geybriyel.music.entity;
 
 import lombok.Data;
-
 import java.util.Date;
 
 @Data
@@ -19,5 +18,5 @@ public class User {
 
     private Date lastLogin;
 
-    private String profilePictureUrl;
+    private String profilePicUrl;
 }

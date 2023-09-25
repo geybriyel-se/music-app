@@ -1,5 +1,6 @@
-package com.geybriyel.music.service;
+package com.geybriyel.music.service.impl;
 
+import com.geybriyel.music.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

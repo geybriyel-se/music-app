@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geybriyel.music.mapper.UserMapper">
+
+    <resultMap type="com.geybriyel.music.entity.User" id="UserResult">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="email" column="email"/>
+        <result property="registrationDate" column="registration_date"/>
+        <result property="lastLogin" column="last_login"/>
+        <result property="profilePicUrl" column="profile_picture_url"/>
+    </resultMap>
+
+    <sql id="selectUserQuery">
+        SELECT id, username, password, email, registration_date, last_login, profile_pic_url
+        FROM users
+    </sql>
+
+    <select id="selectUserList" parameterType="com.geybriyel.music.entity.User" resultMap="UserResult">
+        <include refid="selectUserQuery"/>
+        <where>
+            <if test="username != null  and username != ''"> AND username = #{username}</if>
+            <if test="password != null  and password != ''"> AND password = #{password}</if>
+            <if test="email != null  and email != ''"> AND email = #{email}</if>
+            <if test="registrationDate != null"> AND registration_date = #{registrationDate}</if>
+            <if test="lastLogin != null"> AND last_login = #{last_login}</if>
+            <if test="profilePicUrl != null  and profilePicUrl != ''"> AND profile_pic_url = #{profilePicUrl}</if>
+        </where>
+    </select>
+
+    <select id="selectUserByUserName" parameterType="String" resultMap="UserResult">
+        <include refid="selectUserQuery"/>
+            WHERE username = #{username}
+    </select>
+
+    <select id="selectUserById" parameterType="Long" resultMap="UserResult">
+    <include refid="selectUserQuery"/>
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertUser" parameterType="com.geybriyel.music.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="username != null">username,</if>
+            <if test="password != null">password,</if>
+            <if test="email != null">email ,</if>
+            <if test="registrationDate != null">registration_date,</if>
+            <if test="lastLogin != null">last_login,</if>
+            <if test="profilePicUrl != null">profile_pic_url,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="username != null">#{username},</if>
+            <if test="password != null">#{password},</if>
+            <if test="email != null">#{email},</if>
+            <if test="registrationDate != null">#{registrationDate},</if>
+            <if test="lastLogin != null">#{lastLogin},</if>
+            <if test="profilePicUrl != null">#{profilePicUrl},</if>
+        </trim>
+    </insert>
+</mapper>
