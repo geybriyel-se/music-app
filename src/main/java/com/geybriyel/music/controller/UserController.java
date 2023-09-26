@@ -1,5 +1,6 @@
 package com.geybriyel.music.controller;
 
+import com.geybriyel.music.controller.request.UserLoginReq;
 import com.geybriyel.music.entity.User;
 import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.response.ApiResponse;
@@ -7,6 +8,7 @@ import com.geybriyel.music.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -20,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping("/all")
     public ApiResponse getAllUsers() {
@@ -42,19 +47,33 @@ public class UserController {
         return new ApiResponse(HttpStatus.OK.value(), user);
     }
 
-
-    @PostMapping("/add")
-    public ApiResponse addNewUser(@RequestBody User user) {
+    @PostMapping("/register")
+    public ApiResponse register(@RequestBody User user) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("message", "User successfully added");
         response.put("data", user);
         int i = userService.insertUser(user);
         if (i == -1) {
-            log.error("Failed to add new user. Username not unique");
+            log.error("Failed to add new user. Username not unique.");
             return new ApiResponse(ErrorCodes.USERNAME_NOT_UNIQUE.getCode(), ErrorCodes.USERNAME_NOT_UNIQUE.getMessage());
         }
         log.info("Successfully added new user: {}", user);
         return new ApiResponse(HttpStatus.OK.value(), response);
     }
+
+    @PostMapping("/login")
+    public ApiResponse login(@RequestBody UserLoginReq user) {
+        User loginUser = userService.selectUserByUserName(user.getUsername());
+        boolean matches = passwordEncoder.matches(user.getPassword(), loginUser.getPassword());
+
+        if (!matches) {
+            log.error("Failed login attempt from user '{}'", user.getUsername());
+            return new ApiResponse(ErrorCodes.INCORRECT_CREDENTIALS.getCode(), ErrorCodes.INCORRECT_CREDENTIALS.getMessage());
+        }
+
+        log.info("Login successful from user '{}'", user.getUsername());
+        return new ApiResponse(HttpStatus.OK.value(), "Successfully logged in");
+    }
+
 
 }

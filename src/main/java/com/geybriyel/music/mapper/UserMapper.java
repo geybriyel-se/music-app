@@ -14,6 +14,8 @@ public interface UserMapper {
 
     public User selectUserById(Long id);
 
+    public User selectUserByEmail(String email);
+
     public int insertUser(User user);
 
 }

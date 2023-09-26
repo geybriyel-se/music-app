@@ -41,6 +41,11 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectUserByEmail" parameterType="String" resultMap="UserResult">
+        <include refid="selectUserQuery"/>
+        WHERE username = #{username}
+    </select>
+
     <insert id="insertUser" parameterType="com.geybriyel.music.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users
         <trim prefix="(" suffix=")" suffixOverrides=",">

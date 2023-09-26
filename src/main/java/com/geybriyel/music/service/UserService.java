@@ -12,6 +12,8 @@ public interface UserService {
 
     public User selectUserById(Long id);
 
+    public User selectUserByEmail(String email);
+
     /**
      *
      * @param user
