@@ -43,7 +43,7 @@
 
     <select id="selectUserByEmail" parameterType="String" resultMap="UserResult">
         <include refid="selectUserQuery"/>
-        WHERE username = #{username}
+        WHERE email = #{email}
     </select>
 
     <insert id="insertUser" parameterType="com.geybriyel.music.entity.User" useGeneratedKeys="true" keyProperty="id">

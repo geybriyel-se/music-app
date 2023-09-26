@@ -17,7 +17,7 @@ public interface UserService {
     /**
      *
      * @param user
-     * @return 0 successful, -1 failed:user already exists
+     * @return 0 successful, -1 failed:username taken, -2 failed:email taken, -3 failed:invalid email format
      */
     public int insertUser(User user);
 }

@@ -13,8 +13,11 @@ public enum ErrorCodes {
     INTERNAL_SERVER_ERROR(500, "Internal server error. An error occurred while retrieving the data"),
     JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error parsing the JSON Object"),
     INVALID_SONG_ID(HttpStatus.BAD_REQUEST.value(), "Invalid song ID"),
-    USERNAME_NOT_UNIQUE(HttpStatus.CONFLICT.value(), "Username is already taken."),
+    USERNAME_NOT_UNIQUE(HttpStatus.CONFLICT.value(), "Username is already taken"),
     INCORRECT_CREDENTIALS(HttpStatus.UNAUTHORIZED.value(), "The provided username or password is incorrect"),
+    EMAIL_NOT_UNIQUE(HttpStatus.CONFLICT.value(), "Email address is already in use by another user"),
+    INVALID_EMAIL_FORMAT(HttpStatus.BAD_REQUEST.value(), "Invalid email address format"),
+    USER_DOES_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "User does not exist"),
     ;
 
 

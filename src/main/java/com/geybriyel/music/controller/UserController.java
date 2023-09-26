@@ -53,10 +53,11 @@ public class UserController {
         response.put("message", "User successfully added");
         response.put("data", user);
         int i = userService.insertUser(user);
-        if (i == -1) {
-            log.error("Failed to add new user. Username not unique.");
-            return new ApiResponse(ErrorCodes.USERNAME_NOT_UNIQUE.getCode(), ErrorCodes.USERNAME_NOT_UNIQUE.getMessage());
+
+        if (i != 0) {
+            return getValidationError(i);
         }
+
         log.info("Successfully added new user: {}", user);
         return new ApiResponse(HttpStatus.OK.value(), response);
     }
@@ -64,6 +65,11 @@ public class UserController {
     @PostMapping("/login")
     public ApiResponse login(@RequestBody UserLoginReq user) {
         User loginUser = userService.selectUserByUserName(user.getUsername());
+
+        if (loginUser == null) {
+            return new ApiResponse(ErrorCodes.USER_DOES_NOT_EXIST.getCode(), ErrorCodes.USER_DOES_NOT_EXIST.getMessage());
+        }
+
         boolean matches = passwordEncoder.matches(user.getPassword(), loginUser.getPassword());
 
         if (!matches) {
@@ -73,6 +79,24 @@ public class UserController {
 
         log.info("Login successful from user '{}'", user.getUsername());
         return new ApiResponse(HttpStatus.OK.value(), "Successfully logged in");
+    }
+
+    private ApiResponse getValidationError(int i) {
+        if (i == -1) {
+            log.error("Failed to add new user. Username not unique.");
+            return new ApiResponse(ErrorCodes.USERNAME_NOT_UNIQUE.getCode(), ErrorCodes.USERNAME_NOT_UNIQUE.getMessage());
+        }
+
+        if (i == -2) {
+            log.error("Failed to add new user. Email not unique.");
+            return new ApiResponse(ErrorCodes.EMAIL_NOT_UNIQUE.getCode(), ErrorCodes.EMAIL_NOT_UNIQUE.getMessage());
+        }
+
+        if (i == -3) {
+            log.error("Failed to add new user. Invalid email format.");
+            return new ApiResponse(ErrorCodes.INVALID_EMAIL_FORMAT.getCode(), ErrorCodes.INVALID_EMAIL_FORMAT.getMessage());
+        }
+        return null;
     }
 
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,14 +38,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int insertUser(User user) {
-        User user1 = selectUserByUserName(user.getUsername());
-        if (user1 == null) {
-            String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
-            user.setPassword(hashpw);
-            userMapper.insertUser(user);
-            return 0;
-        } else {
+        User userByUserName = selectUserByUserName(user.getUsername());
+        User userByEmail = selectUserByEmail(user.getEmail());
+
+        if (userByUserName != null) {
             return -1;
         }
+        if (userByEmail != null) {
+            return -2;
+        }
+
+        if (!isValidEmail(user.getEmail())) {
+            return -3;
+        }
+
+        String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hashpw);
+        userMapper.insertUser(user);
+        return 0;
     }
+
+    private boolean isValidEmail(String email) {
+        return Pattern.compile("^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$")
+                .matcher(email)
+                .matches();
+    }
+
+
 }
