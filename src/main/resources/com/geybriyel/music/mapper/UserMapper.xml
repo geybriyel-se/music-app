@@ -5,13 +5,13 @@
 <mapper namespace="com.geybriyel.music.mapper.UserMapper">
 
     <resultMap type="com.geybriyel.music.entity.User" id="UserResult">
-        <id property="id" column="id"/>
-        <result property="username" column="username"/>
-        <result property="password" column="password"/>
-        <result property="email" column="email"/>
-        <result property="registrationDate" column="registration_date"/>
-        <result property="lastLogin" column="last_login"/>
-        <result property="profilePicUrl" column="profile_picture_url"/>
+        <id         property="id" column="id"/>
+        <result     property="username" column="username"/>
+        <result     property="password" column="password"/>
+        <result     property="email" column="email"/>
+        <result     property="registrationDate" column="registration_date"/>
+        <result     property="lastLogin" column="last_login"/>
+        <result     property="profilePicUrl" column="profile_picture_url"/>
     </resultMap>
 
     <sql id="selectUserQuery">

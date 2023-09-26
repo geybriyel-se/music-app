@@ -12,5 +12,10 @@ public interface UserService {
 
     public User selectUserById(Long id);
 
+    /**
+     *
+     * @param user
+     * @return 0 successful, -1 failed:user already exists
+     */
     public int insertUser(User user);
 }

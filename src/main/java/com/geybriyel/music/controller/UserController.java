@@ -1,6 +1,7 @@
 package com.geybriyel.music.controller;
 
 import com.geybriyel.music.entity.User;
+import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.response.ApiResponse;
 import com.geybriyel.music.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +43,16 @@ public class UserController {
     }
 
 
-    // TODO: Add validation for username. Taken usernames should not proceed
     @PostMapping("/add")
     public ApiResponse addNewUser(@RequestBody User user) {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("message", "User successfully added");
         response.put("data", user);
         int i = userService.insertUser(user);
+        if (i == -1) {
+            log.error("Failed to add new user. Username not unique");
+            return new ApiResponse(ErrorCodes.USERNAME_NOT_UNIQUE.getCode(), ErrorCodes.USERNAME_NOT_UNIQUE.getMessage());
+        }
         log.info("Successfully added new user: {}", user);
         return new ApiResponse(HttpStatus.OK.value(), response);
     }
