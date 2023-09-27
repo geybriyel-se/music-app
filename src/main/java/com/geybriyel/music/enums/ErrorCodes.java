@@ -18,6 +18,9 @@ public enum ErrorCodes {
     EMAIL_NOT_UNIQUE(HttpStatus.CONFLICT.value(), "Email address is already in use by another user"),
     INVALID_EMAIL_FORMAT(HttpStatus.BAD_REQUEST.value(), "Invalid email address format"),
     USER_DOES_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "User does not exist"),
+    FOLDER_ALREADY_EXISTS(HttpStatus.CONFLICT.value(), "This folder already exists"),
+    INVALID_FOLDER_ID(HttpStatus.BAD_REQUEST.value(), "Invalid folder id"),
+    FOLDER_DOES_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "You don't have this folder")
     ;
 
 
