@@ -5,8 +5,6 @@ import lombok.Data;
 @Data
 public class Song {
 
-    private Long id;
-
     private Long songId;
 
     private String title;

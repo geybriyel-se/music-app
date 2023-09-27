@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geybriyel.music.mapper.SongToFolderMapper">
+
+    <resultMap type="com.geybriyel.music.entity.SongFolderMapper" id="SongFolderMapperResult">
+        <id         property="folderId"     column="folder_id"/>
+        <result     property="songId"       column="song_id"/>
+    </resultMap>
+
+    <sql id="selectSongFolderMapperQuery">
+        SELECT folder_id, song_id
+        FROM song_folder_mapping
+    </sql>
+
+    <select id="selectSongFolderMapperByFolderId" parameterType="Long" resultMap="SongFolderMapperResult">
+        <include refid="selectSongFolderMapperQuery"/>
+        WHERE folder_id = #{folderId}
+    </select>
+
+    <select id="selectSongFolderMapper" parameterType="com.geybriyel.music.entity.SongFolderMapper" resultMap="SongFolderMapperResult">
+        <include refid="selectSongFolderMapperQuery"/>
+        WHERE folder_id = #{folderId}
+        AND song_id = #{songId}
+    </select>
+
+    <insert id="insertSongFolderMapper" parameterType="com.geybriyel.music.entity.SongFolderMapper" useGeneratedKeys="true" keyProperty="folderId">
+        INSERT INTO song_folder_mapping
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="folderId != null">folder_id,</if>
+            <if test="songId != null">song_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="folderId != null">#{folderId},</if>
+            <if test="songId != null">#{songId},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteSongFolderMapper" parameterType="com.geybriyel.music.entity.SongFolderMapper">
+        DELETE
+        FROM song_folder_mapping
+        WHERE folder_id = #{folderId}
+        AND song_id = #{songId}
+    </delete>
+
+    <delete id="deleteSongFolderMapperByFolderId" parameterType="Long">
+        DELETE
+        FROM song_folder_mapping
+        WHERE folder_id = #{folderId}
+    </delete>
+
+
+
+</mapper>

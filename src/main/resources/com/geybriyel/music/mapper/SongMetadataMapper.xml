@@ -12,7 +12,7 @@
     </resultMap>
 
     <sql id="selectUserQuery">
-        SELECT id, song_id, title, artist, album
+        SELECT song_id, title, artist, album
         FROM song_metadata
     </sql>
 
@@ -31,7 +31,7 @@
         WHERE song_id = #{songId}
     </select>
 
-    <insert id="insertSongMetadata" parameterType="com.geybriyel.music.entity.Song" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertSongMetadata" parameterType="com.geybriyel.music.entity.Song">
         INSERT INTO song_metadata
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="songId != null">song_id,</if>

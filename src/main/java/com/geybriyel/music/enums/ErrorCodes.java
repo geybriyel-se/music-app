@@ -20,7 +20,8 @@ public enum ErrorCodes {
     USER_DOES_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "User does not exist"),
     FOLDER_ALREADY_EXISTS(HttpStatus.CONFLICT.value(), "This folder already exists"),
     INVALID_FOLDER_ID(HttpStatus.BAD_REQUEST.value(), "Invalid folder id"),
-    FOLDER_DOES_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "You don't have this folder")
+    FOLDER_DOES_NOT_EXIST(HttpStatus.NOT_FOUND.value(), "You don't have this folder"),
+    SONG_ALREADY_EXISTS(HttpStatus.CONFLICT.value(), "Song already exists in the folder")
     ;
 
 
