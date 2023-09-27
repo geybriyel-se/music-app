@@ -2,9 +2,11 @@ package com.geybriyel.music.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.geybriyel.music.entity.Song;
 import com.geybriyel.music.response.ApiResponse;
 import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.service.RedisService;
+import com.geybriyel.music.service.SongMetadataService;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
@@ -25,12 +27,14 @@ import java.io.IOException;
 @RequestMapping("/lyrics")
 public class LyricsController {
 
-    @Autowired
-    private RedisService redisService;
-
     @Value("${api.rapidapi.hostkey}")
     private String apiKey;
 
+    @Autowired
+    private RedisService redisService;
+
+    @Autowired
+    private SongMetadataService songMetadataService;
 
     /**
      * Endpoint to get song info based on keyword.
@@ -94,8 +98,16 @@ public class LyricsController {
                     log.info("Failed to retrieve lyrics. Invalid song ID: {}", jsonNode);
                     return new ApiResponse(ErrorCodes.INVALID_SONG_ID.getCode(), ErrorCodes.INVALID_SONG_ID.getMessage());
                 }
+
                 redisService.setValue("lyrics:" + id, jsonNode);
-                log.info("Lyrics of song with id {} retrieved: {}", id, body);
+                log.info("FROM API: Lyrics of song with id {} retrieved: {}", id, body);
+
+                Song song = extractSongMetadata(jsonNode);
+                int i = songMetadataService.insertSongMetadata(song);
+                if (i == 0) {
+                    log.info("Metadata successfully saved in database: {}", song);
+                }
+
                 return new ApiResponse(HttpStatus.OK.value(), jsonNode);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -106,6 +118,19 @@ public class LyricsController {
             log.error(e.getMessage());
             return new ApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ErrorCodes.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private Song extractSongMetadata(JsonNode jsonNode) {
+        Long songId = jsonNode.at("/lyrics/tracking_data/song_id").asLong();
+        String title = jsonNode.at("/lyrics/tracking_data/title").asText();
+        String artist = jsonNode.at("/lyrics/tracking_data/primary_artist").asText();
+        String album = jsonNode.at("/lyrics/tracking_data/primary_album").asText();
+        Song song = new Song();
+        song.setSongId(songId);
+        song.setTitle(title);
+        song.setArtist(artist);
+        song.setAlbum(album);
+        return song;
     }
 
 }
