@@ -99,15 +99,19 @@ public class LyricsController {
                     return new ApiResponse(ErrorCodes.INVALID_SONG_ID.getCode(), ErrorCodes.INVALID_SONG_ID.getMessage());
                 }
 
-                redisService.setValue("lyrics:" + id, jsonNode);
-                log.info("FROM API: Lyrics of song with id {} retrieved: {}", id, body);
 
                 Song song = extractSongMetadata(jsonNode);
+                if (song == null) {
+                    log.error("Song id is not valid. It must contain digits only");
+                    return new ApiResponse(ErrorCodes.INVALID_SONG_ID.getCode(), ErrorCodes.INVALID_SONG_ID.getMessage());
+                }
                 int i = songMetadataService.insertSongMetadata(song);
                 if (i == 0) {
                     log.info("Metadata successfully saved in database: {}", song);
                 }
 
+                redisService.setValue("lyrics:" + id, jsonNode);
+                log.info("FROM API: Lyrics of song with id {} retrieved: {}", id, body);
                 return new ApiResponse(HttpStatus.OK.value(), jsonNode);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -121,7 +125,13 @@ public class LyricsController {
     }
 
     private Song extractSongMetadata(JsonNode jsonNode) {
-        Long songId = jsonNode.at("/lyrics/tracking_data/song_id").asLong();
+        String asText = jsonNode.at("/lyrics/tracking_data/song_id").asText();
+        Long songId;
+        if (asText.matches(".*[^0-9].*")) {
+            songId = Long.parseLong(asText);
+        } else {
+            return null;
+        }
         String title = jsonNode.at("/lyrics/tracking_data/title").asText();
         String artist = jsonNode.at("/lyrics/tracking_data/primary_artist").asText();
         String album = jsonNode.at("/lyrics/tracking_data/primary_album").asText();

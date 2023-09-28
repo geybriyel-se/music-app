@@ -8,10 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCodes {
 
-    INVALID_REQUEST(400, "Invalid request"),
-    RESOURCE_NOT_FOUND(404, "Resource not found"),
-    INTERNAL_SERVER_ERROR(500, "Internal server error. An error occurred while retrieving the data"),
-    JSON_PARSE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error parsing the JSON Object"),
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "Resource not found"),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error. An error occurred while retrieving the data"),
+    JSON_PARSE_ERROR(HttpStatus.BAD_REQUEST.value(), "Error parsing the JSON object"),
     INVALID_SONG_ID(HttpStatus.BAD_REQUEST.value(), "Invalid song ID"),
     USERNAME_NOT_UNIQUE(HttpStatus.CONFLICT.value(), "Username is already taken"),
     INCORRECT_CREDENTIALS(HttpStatus.UNAUTHORIZED.value(), "The provided username or password is incorrect"),

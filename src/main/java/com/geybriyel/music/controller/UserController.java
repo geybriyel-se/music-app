@@ -62,6 +62,13 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse register(@RequestBody User user) {
+        User userByUserName = userService.selectUserByUserName(user.getUsername());
+        if (userByUserName != null) {
+            log.error("Username is already taken");
+            return new ApiResponse(ErrorCodes.USERNAME_NOT_UNIQUE.getCode(), ErrorCodes.USERNAME_NOT_UNIQUE.getMessage());
+        }
+
+
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("message", "User successfully added");
         response.put("data", user);
