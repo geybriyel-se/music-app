@@ -125,11 +125,13 @@ public class LyricsController {
         String title = jsonNode.at("/lyrics/tracking_data/title").asText();
         String artist = jsonNode.at("/lyrics/tracking_data/primary_artist").asText();
         String album = jsonNode.at("/lyrics/tracking_data/primary_album").asText();
-        Song song = new Song();
-        song.setSongId(songId);
-        song.setTitle(title);
-        song.setArtist(artist);
-        song.setAlbum(album);
+
+        Song song = Song.builder()
+                .songId(songId)
+                .title(title)
+                .artist(artist)
+                .album(album)
+                .build();
         return song;
     }
 

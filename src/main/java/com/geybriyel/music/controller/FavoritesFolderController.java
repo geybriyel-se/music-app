@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -133,6 +132,11 @@ public class FavoritesFolderController {
 
     @DeleteMapping("/del/{id}")
     public ApiResponse deleteFolder(@PathVariable Long id) {
+        FavoritesFolder favoritesFolder = folderService.selectFavoritesFolderById(id);
+        if (favoritesFolder == null) {
+            log.error("Failed to delete folder. Folder id does not exist");
+            return new ApiResponse(ErrorCodes.FOLDER_DOES_NOT_EXIST.getCode(), ErrorCodes.FOLDER_DOES_NOT_EXIST.getMessage());
+        }
         int i = folderService.deleteFavoritesFolderById(id);
         // delete all songs in folder
         int i1 = songToFolderService.deleteSongFolderMapperByFolderId(id);

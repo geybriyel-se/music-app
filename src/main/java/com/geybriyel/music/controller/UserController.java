@@ -1,6 +1,7 @@
 package com.geybriyel.music.controller;
 
-import com.geybriyel.music.controller.request.UserLoginReq;
+import com.geybriyel.music.controller.request.LoginReq;
+import com.geybriyel.music.controller.response.RegisterRes;
 import com.geybriyel.music.entity.User;
 import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.response.ApiResponse;
@@ -29,6 +30,10 @@ public class UserController {
     @GetMapping("/all")
     public ApiResponse getAllUsers() {
         List<User> users = userService.selectUserList();
+        if (users.isEmpty()) {
+            log.info("No users");
+            return new ApiResponse(HttpStatus.OK.value(), "There are no users");
+        }
         log.info("Successfully retrieved all users: {}", users);
         return new ApiResponse(HttpStatus.OK.value(), users);
     }
@@ -36,6 +41,10 @@ public class UserController {
     @GetMapping("/id/{id}")
     public ApiResponse getUserById(@PathVariable Long id) {
         User user = userService.selectUserById(id);
+        if (user == null) {
+            log.error("No records with id '{}", id);
+            return new ApiResponse(ErrorCodes.INVALID_USER_ID.getCode(), ErrorCodes.INVALID_USER_ID.getMessage());
+        }
         log.info("Successfully retrieved user with id {}: {}", id, user);
         return new ApiResponse(HttpStatus.OK.value(), user);
     }
@@ -43,6 +52,10 @@ public class UserController {
     @GetMapping("/username/{username}")
     public ApiResponse getUserByUsername(@PathVariable String username) {
         User user = userService.selectUserByUserName(username);
+        if (user == null) {
+            log.error("No records with username '{}", username);
+            return new ApiResponse(ErrorCodes.USER_DOES_NOT_EXIST.getCode(), ErrorCodes.USER_DOES_NOT_EXIST.getMessage());
+        }
         log.info("Successfully retrieved user with username '{}': {}", username, user);
         return new ApiResponse(HttpStatus.OK.value(), user);
     }
@@ -58,12 +71,18 @@ public class UserController {
             return getValidationError(i);
         }
 
-        log.info("Successfully added new user: {}", user);
-        return new ApiResponse(HttpStatus.OK.value(), response);
+        RegisterRes res = RegisterRes.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .build();
+
+        log.info("Successfully added new user: {}", res);
+        return new ApiResponse(HttpStatus.OK.value(), res);
     }
 
     @PostMapping("/login")
-    public ApiResponse login(@RequestBody UserLoginReq user) {
+    public ApiResponse login(@RequestBody LoginReq user) {
         User loginUser = userService.selectUserByUserName(user.getUsername());
 
         if (loginUser == null) {
