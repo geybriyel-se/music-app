@@ -1,9 +1,13 @@
 package com.geybriyel.music.controller;
 
+import com.geybriyel.music.controller.request.AuthenticationReq;
+import com.geybriyel.music.controller.request.RegisterReq;
 import com.geybriyel.music.controller.request.UserLoginReq;
+import com.geybriyel.music.controller.response.AuthenticationRes;
 import com.geybriyel.music.entity.User;
 import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.response.ApiResponse;
+import com.geybriyel.music.service.AuthenticationService;
 import com.geybriyel.music.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,9 @@ public class UserController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationService service;
 
     @GetMapping("/all")
     public ApiResponse getAllUsers() {
@@ -62,8 +69,22 @@ public class UserController {
         return new ApiResponse(HttpStatus.OK.value(), response);
     }
 
+    @PostMapping("/auth/register")
+    public ApiResponse authRegister(@RequestBody RegisterReq req) {
+        AuthenticationRes response = service.register(req);
+        return new ApiResponse(HttpStatus.OK.value(), response);
+    }
+
+    @PostMapping("/auth/authenticate")
+    public ApiResponse authRegister(@RequestBody AuthenticationReq req) {
+        AuthenticationRes response = service.authenticate(req);
+        return new ApiResponse(HttpStatus.OK.value(), response);
+    }
+
+
     @PostMapping("/login")
     public ApiResponse login(@RequestBody UserLoginReq user) {
+
         User loginUser = userService.selectUserByUserName(user.getUsername());
 
         if (loginUser == null) {

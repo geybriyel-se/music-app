@@ -1,18 +1,19 @@
 package com.geybriyel.music.service;
 
 import com.geybriyel.music.entity.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
-    public List<User> selectUserList();
+    List<User> selectUserList();
 
-    public User selectUserByUserName(String username);
+    User selectUserByUserName(String username);
 
-    public User selectUserById(Long id);
+    User selectUserById(Long id);
 
-    public User selectUserByEmail(String email);
+    User selectUserByEmail(String email);
 
     /**
      *

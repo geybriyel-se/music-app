@@ -12,39 +12,68 @@
         <result     property="registrationDate" column="registration_date"/>
         <result     property="lastLogin" column="last_login"/>
         <result     property="profilePicUrl" column="profile_picture_url"/>
+        <result     property="accountNonExpired" column="account_non_expired"/>
+        <result     property="accountNonLocked" column="account_non_locked"/>
+        <result     property="credentialsNonExpired" column="credentials_non_expired"/>
+        <result     property="enabled" column="enabled"/>
     </resultMap>
 
+
     <sql id="selectUserQuery">
-        SELECT id, username, password, email, registration_date, last_login, profile_pic_url
+        SELECT id,
+            username,
+            password,
+            email,
+            registration_date,
+            last_login,
+            profile_pic_url,
+            account_non_expired,
+            account_non_locked,
+            credentials_non_expired,
+            enabled
         FROM users
     </sql>
+
 
     <select id="selectUserList" parameterType="com.geybriyel.music.entity.User" resultMap="UserResult">
         <include refid="selectUserQuery"/>
         <where>
-            <if test="username != null  and username != ''"> AND username = #{username}</if>
-            <if test="password != null  and password != ''"> AND password = #{password}</if>
-            <if test="email != null  and email != ''"> AND email = #{email}</if>
+            <if test="username != null and username != ''"> AND username = #{username}</if>
+            <if test="password != null and password != ''"> AND password = #{password}</if>
+            <if test="email != null and email != ''"> AND email = #{email}</if>
             <if test="registrationDate != null"> AND registration_date = #{registrationDate}</if>
-            <if test="lastLogin != null"> AND last_login = #{last_login}</if>
-            <if test="profilePicUrl != null  and profilePicUrl != ''"> AND profile_pic_url = #{profilePicUrl}</if>
+            <if test="lastLogin != null"> AND last_login = #{lastLogin}</if>
+            <if test="profilePicUrl != null and profilePicUrl != ''"> AND profile_pic_url = #{profilePicUrl}</if>
+            <if test="accountNonExpired != null"> AND account_non_expired = #{accountNonExpired}</if>
+            <if test="accountNonLocked != null"> AND account_non_locked = #{accountNonLocked}</if>
+            <if test="credentialsNonExpired != null"> AND credentials_non_expired = #{credentialsNonExpired}</if>
+            <if test="enabled != null"> AND enabled = #{enabled}</if>
         </where>
     </select>
 
+
     <select id="selectUserByUserName" parameterType="String" resultMap="UserResult">
         <include refid="selectUserQuery"/>
-            WHERE username = #{username}
+        <where>
+            <if test="username != null and username != ''"> AND username = #{username}</if>
+        </where>
     </select>
 
     <select id="selectUserById" parameterType="Long" resultMap="UserResult">
-    <include refid="selectUserQuery"/>
-        WHERE id = #{id}
+        <include refid="selectUserQuery"/>
+        <where>
+            <if test="id != null"> AND id = #{id}</if>
+        </where>
     </select>
+
 
     <select id="selectUserByEmail" parameterType="String" resultMap="UserResult">
         <include refid="selectUserQuery"/>
-        WHERE email = #{email}
+        <where>
+            <if test="email != null and email != ''"> AND email = #{email}</if>
+        </where>
     </select>
+
 
     <insert id="insertUser" parameterType="com.geybriyel.music.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO users
@@ -55,6 +84,10 @@
             <if test="registrationDate != null">registration_date,</if>
             <if test="lastLogin != null">last_login,</if>
             <if test="profilePicUrl != null">profile_pic_url,</if>
+            <if test="accountNonExpired != null">account_non_expired,</if>
+            <if test="accountNonLocked != null">account_non_locked,</if>
+            <if test="credentialsNonExpired != null">credentials_non_expired,</if>
+            <if test="enabled != null">enabled,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="username != null">#{username},</if>
@@ -63,6 +96,11 @@
             <if test="registrationDate != null">#{registrationDate},</if>
             <if test="lastLogin != null">#{lastLogin},</if>
             <if test="profilePicUrl != null">#{profilePicUrl},</if>
+            <if test="accountNonExpired != null">#{accountNonExpired},</if>
+            <if test="accountNonLocked != null">#{accountNonLocked},</if>
+            <if test="credentialsNonExpired != null">#{credentialsNonExpired},</if>
+            <if test="enabled != null">#{enabled},</if>
         </trim>
     </insert>
+
 </mapper>
