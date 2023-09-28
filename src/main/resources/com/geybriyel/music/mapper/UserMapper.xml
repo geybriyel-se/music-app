@@ -33,8 +33,13 @@
 
     <select id="selectUserByUserName" parameterType="String" resultMap="UserResult">
         <include refid="selectUserQuery"/>
-            WHERE username = #{username}
+        <where>
+            <if test="username != null and username != ''">
+                AND BINARY username = #{username}
+            </if>
+        </where>
     </select>
+
 
     <select id="selectUserById" parameterType="Long" resultMap="UserResult">
     <include refid="selectUserQuery"/>

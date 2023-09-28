@@ -28,7 +28,11 @@
 
     <select id="selectMetadataBySongId" parameterType="Long" resultMap="MetadataResult">
         <include refid="selectUserQuery"/>
-        WHERE song_id = #{songId}
+        <where>
+            <if test="songId != null">
+                AND song_id = #{songId}
+            </if>
+        </where>
     </select>
 
     <insert id="insertSongMetadata" parameterType="com.geybriyel.music.entity.Song">

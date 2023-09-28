@@ -11,7 +11,9 @@
     </resultMap>
 
     <sql id="selectFavoritesFolderQuery">
-        SELECT folder_id, username, folder_name
+        SELECT folder_id,
+               username,
+               folder_name
         FROM folder_favorites
     </sql>
 
@@ -26,14 +28,23 @@
 
     <select id="selectFavoritesFolderListByUsername" parameterType="String" resultMap="FavoritesFolderResult">
         <include refid="selectFavoritesFolderQuery"/>
-        WHERE username = #{username}
+        <where>
+            <if test="username != null and username != ''">
+                AND BINARY username = #{username}
+            </if>
+        </where>
     </select>
 
 
     <select id="selectFavoritesFolderById" parameterType="Long" resultMap="FavoritesFolderResult">
         <include refid="selectFavoritesFolderQuery"/>
-        WHERE folder_id = #{folderId}
+        <where>
+            <if test="folderId != null">
+                AND folder_id = #{folderId}
+            </if>
+        </where>
     </select>
+
 
     <insert id="insertFavoritesFolder" parameterType="com.geybriyel.music.entity.FavoritesFolder" useGeneratedKeys="true" keyProperty="folderId">
         INSERT INTO folder_favorites
@@ -52,7 +63,11 @@
     <delete id="deleteFavoritesFolderById" parameterType="Long">
         DELETE
         FROM folder_favorites
-        WHERE folder_id = #{folderId}
+        <where>
+            <if test="folderId != null">
+                AND folder_id = #{folderId}
+            </if>
+        </where>
     </delete>
 
 </mapper>

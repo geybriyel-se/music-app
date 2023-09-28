@@ -1,5 +1,6 @@
 package com.geybriyel.music.controller;
 
+import com.geybriyel.music.controller.response.FavoritesContentRes;
 import com.geybriyel.music.entity.*;
 import com.geybriyel.music.enums.ErrorCodes;
 import com.geybriyel.music.mapper.UserMapper;

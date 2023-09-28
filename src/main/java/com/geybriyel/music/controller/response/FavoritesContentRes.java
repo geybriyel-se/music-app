@@ -1,4 +1,7 @@
-package com.geybriyel.music.entity;
+package com.geybriyel.music.controller.response;
+
+import com.geybriyel.music.entity.FavoritesFolder;
+import com.geybriyel.music.entity.Song;
 
 import java.util.ArrayList;
 import java.util.HashMap;

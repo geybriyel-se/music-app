@@ -16,14 +16,24 @@
 
     <select id="selectSongFolderMapperByFolderId" parameterType="Long" resultMap="SongFolderMapperResult">
         <include refid="selectSongFolderMapperQuery"/>
-        WHERE folder_id = #{folderId}
+        <where>
+            <if test="folderId != null">
+                AND folder_id = #{folderId}
+            </if>
+        </where>
     </select>
+
 
     <select id="selectSongFolderMapper" parameterType="com.geybriyel.music.entity.SongFolderMapper" resultMap="SongFolderMapperResult">
         <include refid="selectSongFolderMapperQuery"/>
-        WHERE folder_id = #{folderId}
-        AND song_id = #{songId}
+        <where>
+            <if test="folderId != null and songId != null">
+                AND folder_id = #{folderId}
+                AND song_id = #{songId}
+            </if>
+        </where>
     </select>
+
 
     <insert id="insertSongFolderMapper" parameterType="com.geybriyel.music.entity.SongFolderMapper" useGeneratedKeys="true" keyProperty="folderId">
         INSERT INTO song_folder_mapping
@@ -38,17 +48,25 @@
     </insert>
 
     <delete id="deleteSongFolderMapper" parameterType="com.geybriyel.music.entity.SongFolderMapper">
-        DELETE
-        FROM song_folder_mapping
-        WHERE folder_id = #{folderId}
-        AND song_id = #{songId}
+        DELETE FROM song_folder_mapping
+        <where>
+            <if test="folderId != null and songId != null">
+                AND folder_id = #{folderId}
+                AND song_id = #{songId}
+            </if>
+        </where>
     </delete>
 
+
     <delete id="deleteSongFolderMapperByFolderId" parameterType="Long">
-        DELETE
-        FROM song_folder_mapping
-        WHERE folder_id = #{folderId}
+        DELETE FROM song_folder_mapping
+        <where>
+            <if test="folderId != null">
+                AND folder_id = #{folderId}
+            </if>
+        </where>
     </delete>
+
 
 
 
