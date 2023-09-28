@@ -2,14 +2,14 @@
 
 The Music Hub Backend is a personal project designed to provide users with a single application for various music-related functionalities. Whether you're looking to manage your favorite songs, explore song lyrics, or interact with user profiles, this backend service has you covered.
 
-In this README, you'll find an overview of the project's features, available endpoints, the technologies and tools used, and a glimpse into future improvements.
-
 ## Table of Contents
 
 - [Features](#features)
 - [Endpoints](#endpoints)
 - [Technologies and Tools Used](#technologies-and-tools-used)
-- [Improvements](#future-improvements)
+- [Database Schema Creation](#database-schema-creation)
+- [Future Improvements](#future-improvements)
+- [Under Development](#under-development)
 
 ## Features
 
@@ -83,6 +83,9 @@ The following endpoints are provided by the Music Hub Backend:
 - Javadoc
 - Git
 
+## Database Schema Creation
+
+The SQL scripts are in the [sql-scripts](/sql-scripts) folder. These scripts are used for creating the initial structure of the database tables and defining their relationships.
 
 ## Future Improvements
 
